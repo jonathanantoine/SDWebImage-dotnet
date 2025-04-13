@@ -1,24 +1,67 @@
-name: Makefile CI
+name: Build SDWebImage Xamarin
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
-
     runs-on: macos-latest
 
+    env:
+      SDK: 17.5
+      NATIVE_RELEASE: 5.14.3
+      NUGET_VERSION: 5.14.3.1
+      SRC_FOLDER: SDWebImage-5.14.3
+      PROJ_NAME: SDWebImage.xcodeproj
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: make
+    - name: Install .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '7.x'
 
-    - name: Run check
-      run: make check
+    - name: Download and extract SDWebImage
+      run: |
+        curl -L https://github.com/SDWebImage/SDWebImage/archive/refs/tags/${{ env.NATIVE_RELEASE }}.zip -o sdwebimage.zip
+        unzip sdwebimage.zip
+        rm sdwebimage.zip
 
-    - name: Run distcheck
-      run: make distcheck
+    - name: Build SDWebImage for simulator
+      run: |
+        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+          -target "SDWebImage static" \
+          -sdk iphonesimulator${{ env.SDK }} \
+          IPHONEOS_DEPLOYMENT_TARGET=12.0 \
+          EXCLUDED_ARCHS="arm64"
+
+    - name: Build SDWebImage for device
+      run: |
+        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+          -target "SDWebImage static" \
+          -sdk iphoneos${{ env.SDK }} \
+          IPHONEOS_DEPLOYMENT_TARGET=12.0
+
+    - name: Create universal lib with lipo
+      run: |
+        lipo -create \
+          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
+          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
+          -output ./libSDWebImage.a
+        lipo -info ./libSDWebImage.a
+
+    - name: Build .NET binding project
+      run: dotnet build -c Release SDWebImage-Xamarin.csproj
+
+    - name: Pack NuGet
+      run: dotnet pack -c Release SDWebImage-Xamarin.csproj
+
+    - name: Push to NuGet (optional)
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        dotnet nuget push bin/Release/Tnn.SDWebImage.${{ env.NUGET_VERSION }}.nupkg \
+          --source https://api.nuget.org
