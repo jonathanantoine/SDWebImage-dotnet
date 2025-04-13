@@ -34,4 +34,16 @@ namespace SDWebImage {
         [Export ("sd_setImageWithURL:placeholderImage:options:completed:")]
         void SetImage ([NullAllowed] NSUrl url, [NullAllowed] UIImage placeholder, SDWebImageOptions options, [NullAllowed] SDExternalCompletionHandler completedHandler);
 	}
+    
+    
+    // @interface WebCache (UIView)
+    [Category]
+    [BaseType(typeof(UIView))]
+    interface UIView_WebCache
+    {
+
+        // -(void)sd_cancelCurrentImageLoad;
+        [Export("sd_cancelCurrentImageLoad")]
+        void CancelCurrentImageLoad();
+    }
 }
