@@ -30,6 +30,6 @@
     </NativeReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".github\workflows\makefile.yml" />
+    <None Include=".github\workflows\makefile.yml" />
   </ItemGroup>
 </Project>
