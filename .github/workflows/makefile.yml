@@ -69,7 +69,8 @@ jobs:
       uses: actions/upload-artifact@v4.6.2
       with:
         name: nuget-package
-        path: '*.nupkg'
+        path: 
+          /**/bin/Release/**/*.nupkg
         
     - name: Push to NuGet (optional)
       if: github.event_name == 'workflow_dispatch'

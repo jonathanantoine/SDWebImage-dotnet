@@ -8,7 +8,7 @@
     
     <!-- Nuget package -->
     <PackageId>com.jonathanantoine.SDWebImage</PackageId>
-    <Version>5.14.3.1</Version>
+    <Version>5.21.0.0</Version>
     <Authors>Tri Nguyen</Authors>
     <Title>SVProgressHUD</Title>
     <PackageProjectUrl>https://github.com/jonathanantoine/SDWebImage-dotnet</PackageProjectUrl>
