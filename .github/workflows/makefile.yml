@@ -70,5 +70,4 @@ jobs:
         name: nuget-package
         compression-level: '0'
         path:
-          /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg
-        
+          /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg  
