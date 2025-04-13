@@ -13,7 +13,6 @@ jobs:
     env:
       SDK: 17.5
       NATIVE_RELEASE: 5.21.0
-      NUGET_VERSION: 5.21.0.0
       SRC_FOLDER: SDWebImage-5.21.0
       PROJ_NAME: SDWebImage.xcodeproj
 
@@ -71,10 +70,4 @@ jobs:
         name: nuget-package
         compression-level: '0'
         path:
-          /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg
-        
-    - name: Push to NuGet (optional)
-      if: github.event_name == 'workflow_dispatch'
-      run: |
-        dotnet nuget push bin/Release/com.jonathanantoine.SDWebImage.${{ env.NUGET_VERSION }}.nupkg \
-          --source https://api.nuget.org
+          /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg  

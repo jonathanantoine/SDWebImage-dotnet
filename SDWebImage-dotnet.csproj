@@ -8,7 +8,7 @@
     
     <!-- Nuget package -->
     <PackageId>com.jonathanantoine.SDWebImage</PackageId>
-    <Version>5.21.0.0</Version>
+    <Version>5.21.0.1</Version>
     <Authors>Jonathan Antoine</Authors>
     <Title>SDWebImage for dotnet</Title>
     <PackageProjectUrl>https://github.com/jonathanantoine/SDWebImage-dotnet</PackageProjectUrl>
@@ -28,5 +28,8 @@
       <Kind>Static</Kind>
       <Frameworks>Foundation ImageIO CoreGraphics</Frameworks>
     </NativeReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".github\workflows\makefile.yml" />
   </ItemGroup>
 </Project>
