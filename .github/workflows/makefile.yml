@@ -1,0 +1,80 @@
+name: Build SDWebImage MAUI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  build:
+    runs-on: macos-latest
+
+    env:
+      SDK: 17.5
+      NATIVE_RELEASE: 5.21.0
+      NUGET_VERSION: 5.21.0.0
+      SRC_FOLDER: SDWebImage-5.21.0
+      PROJ_NAME: SDWebImage.xcodeproj
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.x'
+
+
+    - name: Download and extract SDWebImage
+      run: |
+        curl -L https://github.com/SDWebImage/SDWebImage/archive/refs/tags/${{ env.NATIVE_RELEASE }}.zip -o sdwebimage.zip
+        unzip sdwebimage.zip
+        rm sdwebimage.zip
+
+    - name: Build SDWebImage for simulator
+      run: |
+        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+          -target "SDWebImage static" \
+          -sdk iphonesimulator${{ env.SDK }} \
+          IPHONEOS_DEPLOYMENT_TARGET=12.0 \
+          EXCLUDED_ARCHS="arm64"
+
+    - name: Build SDWebImage for device
+      run: |
+        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+          -target "SDWebImage static" \
+          -sdk iphoneos${{ env.SDK }} \
+          IPHONEOS_DEPLOYMENT_TARGET=12.0
+
+    - name: Create universal lib with lipo
+      run: |
+        lipo -create \
+          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
+          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
+          -output ./libSDWebImage.a
+        lipo -info ./libSDWebImage.a
+
+    - name: restore workkload
+      run: dotnet workload restore
+
+    - name: Build .NET binding project
+      run: dotnet build -c Release SDWebImage-dotnet.csproj
+
+    - name: Pack NuGet
+      run: dotnet pack -c Release SDWebImage-dotnet.csproj
+
+    - name: Upload .nupkg as artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: nuget-package
+        compression-level: '0'
+        path:
+          /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg
+        
+    - name: Push to NuGet (optional)
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        dotnet nuget push bin/Release/com.jonathanantoine.SDWebImage.${{ env.NUGET_VERSION }}.nupkg \
+          --source https://api.nuget.org

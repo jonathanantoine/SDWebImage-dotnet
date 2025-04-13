@@ -1,25 +1,25 @@
-# Xamarin.iOS binding for SDWebImage
+# Maui iOS binding for SDWebImage
 
-[![NuGet version](https://badge.fury.io/nu/Tnn.SDWebImage.svg)](https://badge.fury.io/nu/Tnn.SDWebImage)
+[![NuGet version](https://badge.fury.io/nu/com.jonathanantoine.svg)](https://badge.fury.io/nu/com.jonathanantoine.SDWebImage)
 
 - Native library: [SDWebImage](https://github.com/SDWebImage/SDWebImage)
 
-**Support Net 7.0 for iOS (works with Xcode 15 and iOS 17)**
+**Support Net 9.0 for iOS (works with Xcode 15 and iOS 17)**
 
 ## Nuget
 
-* `Install-Package Tnn.SDWebImage`
-* <https://www.nuget.org/packages/Tnn.SDWebImage>
+* `Install-Package com.jonathanantoine.SDWebImage`
+* <https://www.nuget.org/packages/com.jonathanantoine.SDWebImage>
 
 ## Build
 
 * `make`
-* Output: `bin/Release/net7.0-ios/SDWebImage-Xamarin.dll`
+* Output: `bin/Release/net7.0-ios/SDWebImage-dotnet.dll`
 
 ## Usage
 
 ```csharp
-using SDWebImageXamarin;
+using SDWebImage;
 
 // Creeate imageView or loaded from XIB
 var imageView = new UIImageView();
@@ -30,4 +30,6 @@ imageView.SetImage(NSUrl.FromString(url));
 
 ## Contribution
 
-Only 2 methods available on Xamarin.iOS to load the image from URL. Contribution to [ApiDefinition.cs](ApiDefinition.cs) are welcome, just send PRs.
+Contribution to [ApiDefinition.cs](ApiDefinition.cs) are welcome, just send PRs.
+
+This is initialy a fork from https://github.com/trinnguyen/SDWebImage-Xamarin
