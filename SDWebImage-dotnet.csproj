@@ -1,20 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0-ios</TargetFramework>
-    <RootNamespace>SDWebImageXamarin</RootNamespace>
+    <RootNamespace>SDWebImage</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <IsBindingProject>true</IsBindingProject>
     
     <!-- Nuget package -->
-    <PackageId>Tnn.SDWebImage</PackageId>
+    <PackageId>com.jonathanantoine.SDWebImage</PackageId>
     <Version>5.14.3.1</Version>
     <Authors>Tri Nguyen</Authors>
     <Title>SVProgressHUD</Title>
-    <PackageProjectUrl>https://github.com/trinnguyen/SDWebImage-Xamarin</PackageProjectUrl>
-    <Description>SDWebImage binding for Net 7.0 iOS</Description>
-    <PackageReleaseNotes>SDWebImage binding for Net 7.0 iOS</PackageReleaseNotes>
-    <PackageTags>xamarin ios SDWebImage</PackageTags>
+    <PackageProjectUrl>https://github.com/jonathanantoine/SDWebImage-dotnet</PackageProjectUrl>
+    <Description>SDWebImage binding for Net 9.0 iOS</Description>
+    <PackageReleaseNotes>SDWebImage binding for Net 9.0 iOS</PackageReleaseNotes>
+    <PackageTags>maui ios SDWebImage dotnet</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 

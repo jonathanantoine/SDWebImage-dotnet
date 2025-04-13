@@ -4,7 +4,7 @@ using Foundation;
 using ObjCRuntime;
 using UIKit;
 
-namespace SDWebImageXamarin {
+namespace SDWebImage {
 	[Category]
 	[BaseType (typeof (UIImageView))]
 	interface UIImageView_WebCache {

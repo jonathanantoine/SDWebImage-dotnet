@@ -1,4 +1,4 @@
-name: Build SDWebImage Xamarin
+name: Build SDWebImage MAUI
 
 on:
   workflow_dispatch:
@@ -60,13 +60,13 @@ jobs:
       run: dotnet workload restore
 
     - name: Build .NET binding project
-      run: dotnet build -c Release SDWebImage-Xamarin.csproj
+      run: dotnet build -c Release SDWebImage-dotnet.csproj
 
     - name: Pack NuGet
-      run: dotnet pack -c Release SDWebImage-Xamarin.csproj
+      run: dotnet pack -c Release SDWebImage-dotnet.csproj
 
     - name: Push to NuGet (optional)
       if: github.event_name == 'workflow_dispatch'
       run: |
-        dotnet nuget push bin/Release/Tnn.SDWebImage.${{ env.NUGET_VERSION }}.nupkg \
+        dotnet nuget push bin/Release/com.jonathanantoine.SDWebImage.${{ env.NUGET_VERSION }}.nupkg \
           --source https://api.nuget.org
