@@ -65,6 +65,12 @@ jobs:
     - name: Pack NuGet
       run: dotnet pack -c Release SDWebImage-dotnet.csproj
 
+    - name: Upload .nupkg as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: nuget-package
+        path: bin/Release/com.jonathanantoine.${{ env.NUGET_VERSION }}.nupkg
+        
     - name: Push to NuGet (optional)
       if: github.event_name == 'workflow_dispatch'
       run: |
