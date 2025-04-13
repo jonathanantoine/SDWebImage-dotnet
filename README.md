@@ -1,6 +1,6 @@
 # Maui iOS binding for SDWebImage
 
-[![NuGet version](https://badge.fury.io/nu/com.jonathanantoine.svg)](https://badge.fury.io/nu/com.jonathanantoine.SDWebImage)
+[![NuGet version](https://badge.fury.io/nu/com.jonathanantoine.SDWebImage.svg)](https://badge.fury.io/nu/com.jonathanantoine.SDWebImage)
 
 - Native library: [SDWebImage](https://github.com/SDWebImage/SDWebImage)
 
@@ -13,8 +13,8 @@
 
 ## Build
 
-* `make`
-* Output: `bin/Release/net7.0-ios/SDWebImage-dotnet.dll`
+* Run the github action to build the project
+
 
 ## Usage
 
