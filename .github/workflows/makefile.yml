@@ -70,8 +70,8 @@ jobs:
       with:
         name: nuget-package
         compression-level: '0'
-        path: 
-          /**/bin/Release/**/*.nupkg
+        path:
+          /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg
         
     - name: Push to NuGet (optional)
       if: github.event_name == 'workflow_dispatch'
