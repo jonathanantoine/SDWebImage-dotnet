@@ -20,11 +20,6 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    - name: Install .NET 9
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.x'
-
 
     - name: Download and extract SDWebImage
       run: |
@@ -63,7 +58,11 @@ jobs:
           ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
           -output ./libSDWebImage.a
         lipo -info ./libSDWebImage.a
-  
+
+    - name: Install .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.x' 
 
     - name: restore workload
       run: dotnet workload restore
