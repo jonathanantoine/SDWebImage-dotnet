@@ -18,9 +18,9 @@ jobs:
 
     steps:
     - name: Checkout repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Install .NET
+    - name: Install .NET 9
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.x'
@@ -55,7 +55,7 @@ jobs:
           -output ./libSDWebImage.a
         lipo -info ./libSDWebImage.a
 
-    - name: restore workkload
+    - name: restore workload
       run: dotnet workload restore
 
     - name: Build .NET binding project

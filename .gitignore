@@ -4,3 +4,5 @@
 *.a
 /include
 *.sln
+/.idea
+/Folder.DotSettings.user
