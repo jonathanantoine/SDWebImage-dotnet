@@ -28,9 +28,8 @@ jobs:
         rm sdwebimage.zip
         
     - name: Modifier le project.pbxproj pour inclure SDCallbackQueue.m dans la cible statique
-      working-directory: ${{ env.SRC_FOLDER }}
       run: |
-        PBXPROJ_FILE="${{ env.PROJ_NAME }}/project.pbxproj"
+        PBXPROJ_FILE="${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }}/project.pbxproj"
         SOURCES_PHASE_ID="53761308155AD0D5005750A4"
         BUILD_FILE_ID="321117AA296573680001FC2C"
         COMMENT="/* SDCallbackQueue.m in Sources */"
@@ -100,7 +99,7 @@ jobs:
         name: native-libs
         compression-level: '0'
         path:
-          ${{ env.PROJ_NAME }}/**
+          ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }}/**
     
     
     - name: Build SDWebImage for simulator
