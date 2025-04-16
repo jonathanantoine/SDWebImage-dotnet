@@ -76,7 +76,7 @@ jobs:
         in_phase=0; 
         print "DEBUG: Fin de la phase à la ligne " NR ", contenu: " $0 > "/dev/stderr";
         }
-        ' "$PBXPROJ_FILE" > temp_pbxproj && mv temp_pbxproj "$PBXPROJ_FILE"
+        ' "$PBXPROJ_FILE" > temp_pbxproj && mv temp_pbxproj "$PBXPROJ_FILE" && echo "DEBUG: Fichier modifié généré: $PBXPROJ_FILE (via temp_pbxproj)"
         
         echo "Vérification de l'ajout de la ligne..."
         if grep -q "$BUILD_FILE_ID" "$PBXPROJ_FILE"; then
