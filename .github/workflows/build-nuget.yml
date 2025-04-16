@@ -12,8 +12,8 @@ jobs:
 
     env:
       SDK: 17.5
-      NATIVE_RELEASE: 5.14.3
-      SRC_FOLDER: SDWebImage-5.14.3
+      NATIVE_RELEASE: 5.21.0
+      SRC_FOLDER: SDWebImage-5.21.0
       PROJ_NAME: SDWebImage.xcodeproj
 
     steps:
@@ -45,6 +45,14 @@ jobs:
         xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
           -configuration Release \
           -target "SDWebImage static" \
+          -sdk iphoneos${{ env.SDK }} \
+          IPHONEOS_DEPLOYMENT_TARGET=12.2
+        
+    - name: Build SDWebImage for device
+      run: |
+        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+          -configuration Release \
+          -target "SDWebImage XCFramework" \
           -sdk iphoneos${{ env.SDK }} \
           IPHONEOS_DEPLOYMENT_TARGET=12.2
 
