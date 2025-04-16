@@ -13,7 +13,7 @@
 
 ## Build
 
-* Run the github action to build the project
+* Run the GitHub action to build the project
 
 
 ## Usage
@@ -32,7 +32,7 @@ imageView.SetImage(NSUrl.FromString(url));
 
 Contribution to [ApiDefinition.cs](ApiDefinition.cs) are welcome, just send PRs.
 
-This is initialy a fork from https://github.com/trinnguyen/SDWebImage-Xamarin
+This is initially a fork from https://github.com/trinnguyen/SDWebImage-Xamarin
 
 ## History
 The Xamarin's team binding project is still available but no more maintenance is done : https://github.com/xamarin/XamarinComponents/blob/main/iOS/SDWebImage/source/SDWebImage/StructsAndEnums.cs

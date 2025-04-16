@@ -46,4 +46,34 @@ namespace SDWebImage {
         [Export("sd_cancelCurrentImageLoad")]
         void CancelCurrentImageLoad();
     }
+    
+    
+    public delegate void SDWebImageSuccessBlock (UIImage image, bool cached);
+    public delegate void SDWebImageFailureBlock (NSError error);
+    
+    [BaseType (typeof (NSObject))]
+    interface SDWebImageManager
+    {
+        [Static, Export ("sharedManager")]
+        SDWebImageManager SharedManager { get; }
+        
+        [Export ("cancelForDelegate:")]
+        void CancelForDelegate (NSObject del);
+        
+        [Bind ("setImageWithURL:")]
+        void SetImage ([Target] UIImageView view, NSUrl url);
+        
+        [Bind ("setImageWithURL:")]
+        void SetImage ([Target] UIButton view, NSUrl url);
+        
+        [Bind ("setBackgroundImageWithURL:")]
+        void SetBackgroundImage ([Target] UIButton view, NSUrl url);
+        
+        [Export ("downloadWithURL:delegate:options:")]
+        void Download (NSUrl url, NSObject del, SDWebImageOptions options);
+        
+        [Export ("downloadWithURL:delegate:options:success:failure:")]
+        void Download (NSUrl url, [NullAllowed]NSObject del, SDWebImageOptions options, SDWebImageSuccessBlock success, SDWebImageFailureBlock failure);
+    }
+
 }
