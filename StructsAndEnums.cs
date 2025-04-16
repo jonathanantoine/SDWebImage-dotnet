@@ -33,4 +33,22 @@ namespace SDWebImage {
         ScaleDownLargeImages = 1 << 12
     }
     
+    [Flags]
+    [Native]
+    public enum SDWebImageDownloaderOptions : ulong /* nuint */ {
+        SDWebImageDownloaderLowPriority = 1 << 0,
+        SDWebImageDownloaderProgressiveDownload = 1 << 1,
+        SDWebImageDownloaderUseNSURLCache = 1 << 2,
+        SDWebImageDownloaderIgnoreCachedResponse = 1 << 3,
+        SDWebImageDownloaderContinueInBackground = 1 << 4,
+        SDWebImageDownloaderHandleCookies = 1 << 5,
+        SDWebImageDownloaderAllowInvalidSSLCertificates = 1 << 6,
+        SDWebImageDownloaderHighPriority = 1 << 7
+    }
+    
+    [Native]
+    public enum SDWebImageDownloaderExecutionOrder : long /* nint */ {
+        SDWebImageDownloaderFIFOExecutionOrder,
+        SDWebImageDownloaderLIFOExecutionOrder
+    }
 }
