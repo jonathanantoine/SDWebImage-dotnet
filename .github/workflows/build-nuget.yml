@@ -77,13 +77,13 @@ jobs:
         fi        
         
         
-    - name: Upload .cxcprok files as artifact
+    - name: Upload .cxcproj files as artifact
       uses: actions/upload-artifact@v4.6.2
       with:
         name: native-libs
         compression-level: '0'
         path:
-          ${{ env.PROJ_NAME }}/project.pbxproj
+          ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }}/**
     
     
     - name: Build SDWebImage for simulator
