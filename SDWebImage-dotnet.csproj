@@ -26,7 +26,7 @@
   <ItemGroup>
     <NativeReference Include="libSDWebImage.a">
       <Kind>Static</Kind>
-      <Frameworks>Foundation ImageIO CoreGraphics</Frameworks>
+      <Frameworks>Foundation ImageIO CoreGraphics QuartzCore</Frameworks>
     </NativeReference>
   </ItemGroup>
   <ItemGroup>
