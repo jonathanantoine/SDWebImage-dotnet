@@ -27,92 +27,37 @@ jobs:
         unzip sdwebimage.zip
         rm sdwebimage.zip
         
-    - name: Modifier le project.pbxproj pour inclure SDCallbackQueue.m dans la cible statique
+    - name: Ajouter SDCallbackQueue.m dans project.pbxproj
       working-directory: ${{ env.SRC_FOLDER }}
       run: |
         PBXPROJ_FILE="${{ env.PROJ_NAME }}/project.pbxproj"
-        SOURCES_PHASE_ID="53761308155AD0D5005750A4"
-        BUILD_FILE_ID="321117AA296573680001FC2C"
-        COMMENT="/* SDCallbackQueue.m in Sources */"
-        LINE_TO_ADD="\t\t\t\t${BUILD_FILE_ID} ${COMMENT},"
+        TARGET_LINE="3290FA0A1FA478AF0047D20C /* SDImageFrame.m in Sources */,"
+        NEW_LINE="				321117AA296573680001FC2C /* SDCallbackQueue.m in Sources */,"
     
         if [ ! -f "$PBXPROJ_FILE" ]; then
-        echo "Erreur: Fichier $PBXPROJ_FILE non trouvé!"
+        echo "Erreur : Le fichier $PBXPROJ_FILE n'existe pas."
         exit 1
         fi
     
-        # Meilleure vérification: rechercher BUILD_FILE_ID dans la section Sources spécifique
-        SECTION_CONTENT=$(sed -n "/$SOURCES_PHASE_ID/,/\/* End PBXSourcesBuildPhase \*\//p" "$PBXPROJ_FILE")
-        if echo "$SECTION_CONTENT" | grep -q "$BUILD_FILE_ID"; then
-        echo "La ligne avec BUILD_FILE_ID $BUILD_FILE_ID existe déjà dans la section Sources avec ID $SOURCES_PHASE_ID"
-        echo "Contexte de la ligne existante:"
-        grep -n -A 5 -B 5 "$BUILD_FILE_ID" "$PBXPROJ_FILE"
-        exit 0
-        fi
+        # Créer une sauvegarde du fichier original
+        cp "$PBXPROJ_FILE" "$PBXPROJ_FILE.bak"
     
-        echo "La ligne n'existe pas dans la section Sources. Ajout en cours..."
+        # Ajouter la nouvelle ligne après la ligne cible
+        sed -i'' -e "/$TARGET_LINE/a\\
+        $NEW_LINE" "$PBXPROJ_FILE"
     
-        # Trouver l'endroit exact où insérer la ligne: juste avant la fermeture de la liste des fichiers
-        awk -v phase_id="$SOURCES_PHASE_ID" -v line_to_add="$LINE_TO_ADD" '
-        BEGIN { in_phase=0; in_files=0; added=0 }
-        # Reconnaître le début de la section Sources avec l'ID
-        $0 ~ phase_id " \\/\\* Sources \\*\\/ = {" || $0 ~ phase_id {
-        in_phase=1;
-        print;
-        next;
-        }
-        # Reconnaître le début de la liste des fichiers
-        in_phase && /files = \(/ {
-        in_files=1;
-        print;
-        next;
-        }
-        # Trouver la fin de la liste des fichiers pour ajouter notre ligne
-        in_phase && in_files && /^\s*\);/ {
-        if (!added) {
-         # Ajouter la ligne juste avant la fermeture de la liste
-         print line_to_add;
-         added=1;
-        }
-        print;
-        in_files=0;
-        next;
-        }
-        # Fin de la section
-        in_phase && /};/ {
-        in_phase=0;
-        print;
-        next;
-        }
-        # Imprimer toutes les autres lignes inchangées
-        { print }
-        END {
-        if (!added) {
-         print "AVERTISSEMENT: Structure attendue non trouvée, la ligne n\'a pas été ajoutée" > "/dev/stderr";
-         exit 1;
-        }
-        }
-        ' "$PBXPROJ_FILE" > temp_pbxproj
-    
-        if [ $? -eq 0 ]; then
-        # Vérifier que la ligne a bien été ajoutée dans le fichier temporaire
-        if grep -q "$BUILD_FILE_ID" temp_pbxproj; then
-         mv temp_pbxproj "$PBXPROJ_FILE"
-         echo "Fichier modifié avec succès. Ligne ajoutée dans la section Sources."
-        
-         # Contexte autour de la ligne ajoutée
-         echo "Contexte de la ligne ajoutée (10 lignes autour):"
-         grep -n -A 5 -B 5 "$BUILD_FILE_ID" "$PBXPROJ_FILE"
+        # Vérifier si la ligne a été ajoutée
+        if grep -q "$NEW_LINE" "$PBXPROJ_FILE"; then
+        echo "Ligne ajoutée avec succès dans $PBXPROJ_FILE."
         else
-         echo "ERREUR: La ligne n'a pas été ajoutée dans le fichier temporaire."
-         rm -f temp_pbxproj
-         exit 1
-        fi
-        else
-        echo "ERREUR lors de la modification du fichier."
-        rm -f temp_pbxproj
+        echo "Erreur : Impossible d'ajouter la ligne dans $PBXPROJ_FILE."
+        # Restaurer la sauvegarde en cas d'échec
+        mv "$PBXPROJ_FILE.bak" "$PBXPROJ_FILE"
         exit 1
         fi
+    
+        # Supprimer la sauvegarde si tout s'est bien passé
+        rm "$PBXPROJ_FILE.bak"
         
     - name: Upload .cxcproj files as artifact
       uses: actions/upload-artifact@v4.6.2
