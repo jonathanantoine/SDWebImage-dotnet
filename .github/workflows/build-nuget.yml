@@ -28,70 +28,91 @@ jobs:
         rm sdwebimage.zip
         
     - name: Modifier le project.pbxproj pour inclure SDCallbackQueue.m dans la cible statique
+      working-directory: ${{ env.SRC_FOLDER }}
       run: |
-        PBXPROJ_FILE="${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }}/project.pbxproj"
+        PBXPROJ_FILE="${{ env.PROJ_NAME }}/project.pbxproj"
         SOURCES_PHASE_ID="53761308155AD0D5005750A4"
         BUILD_FILE_ID="321117AA296573680001FC2C"
         COMMENT="/* SDCallbackQueue.m in Sources */"
         LINE_TO_ADD="\t\t\t\t${BUILD_FILE_ID} ${COMMENT},"
-        
+    
         if [ ! -f "$PBXPROJ_FILE" ]; then
         echo "Erreur: Fichier $PBXPROJ_FILE non trouvé!"
         exit 1
         fi
-        
-        echo "Recherche de la phase avec ID: $SOURCES_PHASE_ID dans $PBXPROJ_FILE"
-        grep -n "$SOURCES_PHASE_ID" "$PBXPROJ_FILE" || echo "ID de phase non trouvé!"
-        
-        # Extraire et afficher la section autour de l'ID
-        echo "Extrait de la section cible (10 lignes avant et après l'ID):"
-        grep -A 10 -B 10 "$SOURCES_PHASE_ID" "$PBXPROJ_FILE" || echo "Impossible d'extraire la section!"
-        
-        # Script modifié pour ajouter des logs
+    
+        # Meilleure vérification: rechercher BUILD_FILE_ID dans la section Sources spécifique
+        SECTION_CONTENT=$(sed -n "/$SOURCES_PHASE_ID/,/\/* End PBXSourcesBuildPhase \*\//p" "$PBXPROJ_FILE")
+        if echo "$SECTION_CONTENT" | grep -q "$BUILD_FILE_ID"; then
+        echo "La ligne avec BUILD_FILE_ID $BUILD_FILE_ID existe déjà dans la section Sources avec ID $SOURCES_PHASE_ID"
+        echo "Contexte de la ligne existante:"
+        grep -n -A 5 -B 5 "$BUILD_FILE_ID" "$PBXPROJ_FILE"
+        exit 0
+        fi
+    
+        echo "La ligne n'existe pas dans la section Sources. Ajout en cours..."
+    
+        # Trouver l'endroit exact où insérer la ligne: juste avant la fermeture de la liste des fichiers
         awk -v phase_id="$SOURCES_PHASE_ID" -v line_to_add="$LINE_TO_ADD" '
-        BEGIN { in_phase=0; in_files=0 }
-        $0 ~ phase_id { 
-        in_phase=1; 
-        print "DEBUG: Trouvé ID de phase à la ligne " NR ", contenu: " $0 > "/dev/stderr";
-        }
-        in_phase && /files = \(/ { 
-        in_files=1; 
-        print "DEBUG: Trouvé début liste des fichiers à la ligne " NR ", contenu: " $0 > "/dev/stderr";
-        }
-        in_phase && in_files && /^\s*\);/ {
-        print "DEBUG: Trouvé fin liste des fichiers à la ligne " NR ", contenu: " $0 > "/dev/stderr";
-        print "DEBUG: Ajout de la ligne: " line_to_add > "/dev/stderr";
-        print line_to_add;
-        in_files=0;
-        
-        # Enregistrer ligne suivante pour le log
-        getline next_line;
-        print "DEBUG: Ligne suivante: " next_line > "/dev/stderr";
-        print next_line;
+        BEGIN { in_phase=0; in_files=0; added=0 }
+        # Reconnaître le début de la section Sources avec l'ID
+        $0 ~ phase_id " \\/\\* Sources \\*\\/ = {" || $0 ~ phase_id {
+        in_phase=1;
+        print;
         next;
         }
-        { print }
-        in_phase && /};/ { 
-        in_phase=0; 
-        print "DEBUG: Fin de la phase à la ligne " NR ", contenu: " $0 > "/dev/stderr";
+        # Reconnaître le début de la liste des fichiers
+        in_phase && /files = \(/ {
+        in_files=1;
+        print;
+        next;
         }
-        ' "$PBXPROJ_FILE" > temp_pbxproj && mv temp_pbxproj "$PBXPROJ_FILE" && echo "DEBUG: Fichier modifié généré: $PBXPROJ_FILE (via temp_pbxproj)"
+        # Trouver la fin de la liste des fichiers pour ajouter notre ligne
+        in_phase && in_files && /^\s*\);/ {
+        if (!added) {
+         # Ajouter la ligne juste avant la fermeture de la liste
+         print line_to_add;
+         added=1;
+        }
+        print;
+        in_files=0;
+        next;
+        }
+        # Fin de la section
+        in_phase && /};/ {
+        in_phase=0;
+        print;
+        next;
+        }
+        # Imprimer toutes les autres lignes inchangées
+        { print }
+        END {
+        if (!added) {
+         print "AVERTISSEMENT: Structure attendue non trouvée, la ligne n\'a pas été ajoutée" > "/dev/stderr";
+         exit 1;
+        }
+        }
+        ' "$PBXPROJ_FILE" > temp_pbxproj
+    
+        if [ $? -eq 0 ]; then
+        # Vérifier que la ligne a bien été ajoutée dans le fichier temporaire
+        if grep -q "$BUILD_FILE_ID" temp_pbxproj; then
+         mv temp_pbxproj "$PBXPROJ_FILE"
+         echo "Fichier modifié avec succès. Ligne ajoutée dans la section Sources."
         
-        echo "Vérification de l'ajout de la ligne..."
-        if grep -q "$BUILD_FILE_ID" "$PBXPROJ_FILE"; then
-        echo "Modification réussie. Ligne ajoutée."
-        
-        # Montrer le contexte autour de la ligne ajoutée
-        echo "Contexte autour de la ligne ajoutée (5 lignes avant et après):"
-        grep -n -A 5 -B 5 "$BUILD_FILE_ID" "$PBXPROJ_FILE"
+         # Contexte autour de la ligne ajoutée
+         echo "Contexte de la ligne ajoutée (10 lignes autour):"
+         grep -n -A 5 -B 5 "$BUILD_FILE_ID" "$PBXPROJ_FILE"
         else
-        echo "Erreur: La modification n'a pas été appliquée."
+         echo "ERREUR: La ligne n'a pas été ajoutée dans le fichier temporaire."
+         rm -f temp_pbxproj
+         exit 1
+        fi
+        else
+        echo "ERREUR lors de la modification du fichier."
+        rm -f temp_pbxproj
         exit 1
         fi
-        
-        # Vérification supplémentaire pour comprendre la structure
-        echo "Structure des sections de files dans le fichier:"
-        grep -n "files = (" "$PBXPROJ_FILE" | head -10
         
     - name: Upload .cxcproj files as artifact
       uses: actions/upload-artifact@v4.6.2
