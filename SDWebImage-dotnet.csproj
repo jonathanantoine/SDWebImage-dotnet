@@ -1,35 +1,41 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0-ios</TargetFramework>
-    <RootNamespace>SDWebImage</RootNamespace>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>true</ImplicitUsings>
-    <IsBindingProject>true</IsBindingProject>
-    
-    <!-- Nuget package -->
-    <PackageId>com.jonathanantoine.SDWebImage</PackageId>
-    <Version>5.21.0.2</Version>
-    <Authors>Jonathan Antoine</Authors>
-    <Title>SDWebImage for dotnet</Title>
-    <PackageProjectUrl>https://github.com/jonathanantoine/SDWebImage-dotnet</PackageProjectUrl>
-    <Description>SDWebImage binding for Net 9.0 iOS</Description>
-    <PackageReleaseNotes>SDWebImage binding for Net 9.0 iOS</PackageReleaseNotes>
-    <PackageTags>maui ios SDWebImage dotnet</PackageTags>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0-ios</TargetFramework>
+        <RootNamespace>SDWebImage</RootNamespace>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>true</ImplicitUsings>
+        <IsBindingProject>true</IsBindingProject>
 
-  <ItemGroup>
-    <ObjcBindingApiDefinition Include="ApiDefinition.cs" />
-    <ObjcBindingCoreSource Include="StructsAndEnums.cs" />
-    <None Include="README.md" Pack="true" PackagePath="\"/>
-  </ItemGroup>
-  <ItemGroup>
-    <NativeReference Include="libSDWebImage.a">
-      <Kind>Static</Kind>
-      <Frameworks>Foundation ImageIO CoreGraphics</Frameworks>
-    </NativeReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".github\workflows\build-nuget.yml" />
-  </ItemGroup>
+        <!-- Nuget package -->
+        <PackageId>com.jonathanantoine.SDWebImage</PackageId>
+        <Version>5.21.0.3</Version>
+        <Authors>Jonathan Antoine</Authors>
+        <Title>SDWebImage for dotnet</Title>
+        <PackageProjectUrl>https://github.com/jonathanantoine/SDWebImage-dotnet</PackageProjectUrl>
+        <Description>SDWebImage binding for Net 9.0 iOS</Description>
+        <PackageReleaseNotes>SDWebImage binding for Net 9.0 iOS</PackageReleaseNotes>
+        <PackageTags>maui ios SDWebImage dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <PublishTrimmed>false</PublishTrimmed>
+        <IsTrimmable>false</IsTrimmable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ObjcBindingApiDefinition Include="ApiDefinition.cs"/>
+        <ObjcBindingCoreSource Include="StructsAndEnums.cs"/>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+    <ItemGroup>
+        <NativeReference Include="libSDWebImage.a">
+            <Kind>Static</Kind>
+            <Frameworks>Foundation ImageIO CoreGraphics QuartzCore</Frameworks>
+            <SmartLink>True</SmartLink>
+            <ForceLoad>True</ForceLoad>
+            <LinkerFlags>-ObjC -fobjc-arc</LinkerFlags>
+        </NativeReference>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include=".github\workflows\build-nuget.yml"/>
+    </ItemGroup>
 </Project>
