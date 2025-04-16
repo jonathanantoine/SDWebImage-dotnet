@@ -55,11 +55,7 @@ jobs:
           ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
           -output ./libSDWebImage.a
         lipo -info ./libSDWebImage.a
-        nm -gU libSDWebImage.a | grep SDCallbackQueue
-        
-        
-        
-
+  
 
     - name: restore workload
       run: dotnet workload restore
