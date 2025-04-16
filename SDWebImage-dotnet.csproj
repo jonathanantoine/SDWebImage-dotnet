@@ -8,7 +8,7 @@
     
     <!-- Nuget package -->
     <PackageId>com.jonathanantoine.SDWebImage</PackageId>
-    <Version>5.21.0.2</Version>
+    <Version>5.21.0.3</Version>
     <Authors>Jonathan Antoine</Authors>
     <Title>SDWebImage for dotnet</Title>
     <PackageProjectUrl>https://github.com/jonathanantoine/SDWebImage-dotnet</PackageProjectUrl>
