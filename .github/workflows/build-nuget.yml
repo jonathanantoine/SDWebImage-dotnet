@@ -28,54 +28,37 @@ jobs:
         rm sdwebimage.zip
         
     - name: Modifier le project.pbxproj pour inclure SDCallbackQueue.m dans la cible statique
-      working-directory: ${{ env.SRC_FOLDER }} # Adaptez le chemin
+      working-directory: ${{ env.SRC_FOLDER }}
       run: |
         PBXPROJ_FILE="${{ env.PROJ_NAME }}/project.pbxproj"
-        SOURCES_PHASE_ID="53761308155AD0D5005750A4" # ID de PBXSourcesBuildPhase pour "SDWebImage static"
-        BUILD_FILE_ID="321117AA296573680001FC2C"    # ID du PBXBuildFile pour SDCallbackQueue.m
+        SOURCES_PHASE_ID="53761308155AD0D5005750A4"
+        BUILD_FILE_ID="321117AA296573680001FC2C"
         COMMENT="/* SDCallbackQueue.m in Sources */"
         LINE_TO_ADD="\t\t\t\t${BUILD_FILE_ID} ${COMMENT},"
-
-        # Vérifier si le fichier existe
+        
         if [ ! -f "$PBXPROJ_FILE" ]; then
           echo "Erreur: Fichier $PBXPROJ_FILE non trouvé!"
           exit 1
         fi
-
-        # Vérifier si la ligne est déjà présente dans la bonne section
-        # awk est plus adapté pour vérifier DANS la section que grep seul
-        already_present=$(awk -v phase_id="$SOURCES_PHASE_ID" -v build_id="$BUILD_FILE_ID" '
-          BEGIN { found=0; in_phase=0 }
-          $0 ~ phase_id { in_phase=1 }
-          in_phase && $0 ~ build_id { found=1; exit }
-          in_phase && /};/ { in_phase=0 } # Fin de la section de la phase
-          END { print found }
-        ' "$PBXPROJ_FILE")
-
-        if [ "$already_present" -eq 1 ]; then
-          echo "La référence à ${BUILD_FILE_ID} est déjà présente dans la phase ${SOURCES_PHASE_ID}. Aucune modification nécessaire."
-        else
-          echo "Ajout de la référence ${BUILD_FILE_ID} à la phase ${SOURCES_PHASE_ID}..."
-          # Utilise awk pour insérer la ligne avant le ');' final de la liste 'files'
-          # dans la section de la phase de compilation concernée.
-          awk -v phase_id="$SOURCES_PHASE_ID" -v line_to_add="$LINE_TO_ADD" '
-          BEGIN { in_phase=0; in_files=0 }
-          $0 ~ phase_id { in_phase=1 } # Trouvé le début de la section de la phase
-          in_phase && /files = \(/ { in_files=1 } # Trouvé le début de la liste files
-          in_phase && in_files && /^\s*\);/ { # Trouvé la fin de la liste files DANS la bonne phase
-            print line_to_add; # Imprimer la nouvelle ligne AVANT la ligne de fermeture
-            in_files=0; # On a fini avec la liste files
-          }
-          { print } # Imprimer la ligne actuelle
-          in_phase && /};/ { in_phase=0 } # Fin de la section de la phase
-          ' "$PBXPROJ_FILE" > temp_pbxproj && mv temp_pbxproj "$PBXPROJ_FILE"
-
-          echo "Modification effectuée."
-          # Optionnel: Vérifier que l'ajout a bien eu lieu
-          grep "$BUILD_FILE_ID" "$PBXPROJ_FILE" || (echo "Erreur: Echec de la vérification de l'ajout"; exit 1)
-
-        fi        
         
+        awk -v phase_id="$SOURCES_PHASE_ID" -v line_to_add="$LINE_TO_ADD" '
+        BEGIN { in_phase=0; in_files=0 }
+        $0 ~ phase_id { in_phase=1 }
+        in_phase && /files = \(/ { in_files=1 }
+        in_phase && in_files && /^\s*\);/ {
+          print line_to_add;
+          in_files=0;
+        }
+        { print }
+        in_phase && /};/ { in_phase=0 }
+        ' "$PBXPROJ_FILE" > temp_pbxproj && mv temp_pbxproj "$PBXPROJ_FILE"
+        
+        if grep -q "$BUILD_FILE_ID" "$PBXPROJ_FILE"; then
+          echo "Modification réussie."
+        else
+          echo "Erreur: La modification n'a pas été appliquée."
+          exit 1
+        fi
         
     - name: Upload .cxcproj files as artifact
       uses: actions/upload-artifact@v4.6.2
