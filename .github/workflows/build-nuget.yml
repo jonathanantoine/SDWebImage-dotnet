@@ -12,8 +12,8 @@ jobs:
 
     env:
       SDK: 17.5
-      NATIVE_RELEASE: 5.21.0
-      SRC_FOLDER: SDWebImage-5.21.0
+      NATIVE_RELEASE: 5.14.3
+      SRC_FOLDER: SDWebImage-5.14.3
       PROJ_NAME: SDWebImage.xcodeproj
 
     steps:
