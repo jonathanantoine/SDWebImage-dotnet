@@ -27,21 +27,21 @@ jobs:
         unzip sdwebimage.zip
         rm sdwebimage.zip
 
-    - name: Build SDWebImage for simulator
-      run: |
-        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-          -target "SDWebImage static" \
-          -sdk iphonesimulator${{ env.SDK }} \
-          IPHONEOS_DEPLOYMENT_TARGET=12.2 \
-          EXCLUDED_ARCHS="arm64"
-
-    - name: Build SDWebImage for device
-      run: |
-        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-          -configuration Release \
-          -target "SDWebImage static" \
-          -sdk iphoneos${{ env.SDK }} \
-          IPHONEOS_DEPLOYMENT_TARGET=12.2
+#    - name: Build SDWebImage for simulator
+#      run: |
+#        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+#          -target "SDWebImage static" \
+#          -sdk iphonesimulator${{ env.SDK }} \
+#          IPHONEOS_DEPLOYMENT_TARGET=12.2 \
+#          EXCLUDED_ARCHS="arm64"
+#
+#    - name: Build SDWebImage for device
+#      run: |
+#        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+#          -configuration Release \
+#          -target "SDWebImage static" \
+#          -sdk iphoneos${{ env.SDK }} \
+#          IPHONEOS_DEPLOYMENT_TARGET=12.2
         
     - name: Build SDWebImage for device
       run: |
@@ -50,14 +50,24 @@ jobs:
           -target "SDWebImage XCFramework" \
           -sdk iphoneos${{ env.SDK }} \
           IPHONEOS_DEPLOYMENT_TARGET=12.2
-
-    - name: Create universal lib with lipo
-      run: |
-        lipo -create \
-          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
-          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
-          -output ./libSDWebImage.a
-        lipo -info ./libSDWebImage.a
+        
+        
+    - name: Upload .a files as artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: native-libs
+        compression-level: '0'
+        path:
+          ${{ env.SRC_FOLDER }}/build/**
+      
+      
+      #    - name: Create universal lib with lipo
+#      run: |
+#        lipo -create \
+#          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
+#          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
+#          -output ./libSDWebImage.a
+#        lipo -info ./libSDWebImage.a
 
     - name: Install .NET 9
       uses: actions/setup-dotnet@v4
