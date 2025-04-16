@@ -31,7 +31,7 @@ jobs:
       working-directory: ${{ env.SRC_FOLDER }}
       run: |
         PBXPROJ_FILE="${{ env.PROJ_NAME }}/project.pbxproj"
-        TARGET_LINE="3290FA0A1FA478AF0047D20C /* SDImageFrame.m in Sources */,"
+        TARGET_LINE="3290FA0A1FA478AF0047D20C \/\* SDImageFrame\.m in Sources \*\/,"
         NEW_LINE="				321117AA296573680001FC2C /* SDCallbackQueue.m in Sources */,"
     
         if [ ! -f "$PBXPROJ_FILE" ]; then
