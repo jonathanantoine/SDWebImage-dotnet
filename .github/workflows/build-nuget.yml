@@ -37,28 +37,62 @@ jobs:
         LINE_TO_ADD="\t\t\t\t${BUILD_FILE_ID} ${COMMENT},"
         
         if [ ! -f "$PBXPROJ_FILE" ]; then
-          echo "Erreur: Fichier $PBXPROJ_FILE non trouvé!"
-          exit 1
+        echo "Erreur: Fichier $PBXPROJ_FILE non trouvé!"
+        exit 1
         fi
         
+        echo "Recherche de la phase avec ID: $SOURCES_PHASE_ID dans $PBXPROJ_FILE"
+        grep -n "$SOURCES_PHASE_ID" "$PBXPROJ_FILE" || echo "ID de phase non trouvé!"
+        
+        # Extraire et afficher la section autour de l'ID
+        echo "Extrait de la section cible (10 lignes avant et après l'ID):"
+        grep -A 10 -B 10 "$SOURCES_PHASE_ID" "$PBXPROJ_FILE" || echo "Impossible d'extraire la section!"
+        
+        # Script modifié pour ajouter des logs
         awk -v phase_id="$SOURCES_PHASE_ID" -v line_to_add="$LINE_TO_ADD" '
         BEGIN { in_phase=0; in_files=0 }
-        $0 ~ phase_id { in_phase=1 }
-        in_phase && /files = \(/ { in_files=1 }
+        $0 ~ phase_id { 
+        in_phase=1; 
+        print "DEBUG: Trouvé ID de phase à la ligne " NR ", contenu: " $0 > "/dev/stderr";
+        }
+        in_phase && /files = \(/ { 
+        in_files=1; 
+        print "DEBUG: Trouvé début liste des fichiers à la ligne " NR ", contenu: " $0 > "/dev/stderr";
+        }
         in_phase && in_files && /^\s*\);/ {
-          print line_to_add;
-          in_files=0;
+        print "DEBUG: Trouvé fin liste des fichiers à la ligne " NR ", contenu: " $0 > "/dev/stderr";
+        print "DEBUG: Ajout de la ligne: " line_to_add > "/dev/stderr";
+        print line_to_add;
+        in_files=0;
+        
+        # Enregistrer ligne suivante pour le log
+        getline next_line;
+        print "DEBUG: Ligne suivante: " next_line > "/dev/stderr";
+        print next_line;
+        next;
         }
         { print }
-        in_phase && /};/ { in_phase=0 }
+        in_phase && /};/ { 
+        in_phase=0; 
+        print "DEBUG: Fin de la phase à la ligne " NR ", contenu: " $0 > "/dev/stderr";
+        }
         ' "$PBXPROJ_FILE" > temp_pbxproj && mv temp_pbxproj "$PBXPROJ_FILE"
         
+        echo "Vérification de l'ajout de la ligne..."
         if grep -q "$BUILD_FILE_ID" "$PBXPROJ_FILE"; then
-          echo "Modification réussie."
+        echo "Modification réussie. Ligne ajoutée."
+        
+        # Montrer le contexte autour de la ligne ajoutée
+        echo "Contexte autour de la ligne ajoutée (5 lignes avant et après):"
+        grep -n -A 5 -B 5 "$BUILD_FILE_ID" "$PBXPROJ_FILE"
         else
-          echo "Erreur: La modification n'a pas été appliquée."
-          exit 1
+        echo "Erreur: La modification n'a pas été appliquée."
+        exit 1
         fi
+        
+        # Vérification supplémentaire pour comprendre la structure
+        echo "Structure des sections de files dans le fichier:"
+        grep -n "files = (" "$PBXPROJ_FILE" | head -10
         
     - name: Upload .cxcproj files as artifact
       uses: actions/upload-artifact@v4.6.2
