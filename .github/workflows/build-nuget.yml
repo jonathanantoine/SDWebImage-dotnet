@@ -100,7 +100,7 @@ jobs:
         name: native-libs
         compression-level: '0'
         path:
-          ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }}/**
+          ${{ env.PROJ_NAME }}/**
     
     
     - name: Build SDWebImage for simulator
@@ -137,13 +137,13 @@ jobs:
 #          ${{ env.SRC_FOLDER }}/build/**
       
       
-      #    - name: Create universal lib with lipo
-#      run: |
-#        lipo -create \
-#          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
-#          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
-#          -output ./libSDWebImage.a
-#        lipo -info ./libSDWebImage.a
+    - name: Create universal lib with lipo
+      run: |
+        lipo -create \
+          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
+          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
+          -output ./libSDWebImage.a
+        lipo -info ./libSDWebImage.a
 
     - name: Install .NET 9
       uses: actions/setup-dotnet@v4
