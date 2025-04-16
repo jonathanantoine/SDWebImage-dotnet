@@ -26,46 +26,41 @@ jobs:
         unzip sdwebimage.zip
         rm sdwebimage.zip
 
+    - name: Injecter la ligne pour SDCallbackQueue
+      run: |
+        set -e # Arrête le script si une commande échoue
 
-    - task: Bash@3
-      displayName: 'Injecter la ligne pour SDCallbackQueue'
-      inputs:
-        targetType: 'inline'
-      # IMPORTANT: Remplacez 'chemin/vers/votre/fichier.ext' ci-dessous
-      # par le chemin réel de votre fichier (ex: MonApp/MonApp.xcodeproj/project.pbxproj)
-        script: |
-          #!/bin/bash
-          set -e # Arrête le script si une commande échoue
-          
-          FILE_PATH="${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }}/project.pbxproj" # <-- MODIFIEZ CECI
-          LINE_NUMBER=1271
-          LINE_TO_INSERT='				321117AA296573680001FC2C /* SDCallbackQueue.m in Sources */,'
-          
-          echo "Vérification de l'existence du fichier : $FILE_PATH"
-          if [ ! -f "$FILE_PATH" ]; then
-            echo "ERREUR: Le fichier $FILE_PATH n'a pas été trouvé."
-            exit 1
-          fi
-          
-          echo "Tentative d'insertion de la ligne à la ligne $LINE_NUMBER dans $FILE_PATH"
-          
-          # Utilisation de sed pour insérer la ligne.
-          # L'option -i '' est nécessaire sur macOS (BSD sed) pour éditer le fichier en place sans créer de backup.
-          # La commande 'i\' insère le texte qui suit *avant* la ligne spécifiée.
-          # Attention aux caractères spéciaux dans LINE_TO_INSERT si vous la changez. Ici, ça devrait aller.
-          sed -i '' "${LINE_NUMBER}i\\
-          ${LINE_TO_INSERT}
-          " "$FILE_PATH"
-          
-          echo "Insertion terminée."
-          
-          # Optionnel : Vérification (affiche la ligne insérée et quelques lignes autour)
-          echo "Vérification du contenu autour de la ligne $LINE_NUMBER :"
-          # sed -n 'start,end p' affiche les lignes dans cet intervalle
-          start_line=$((LINE_NUMBER - 2))
-          end_line=$((LINE_NUMBER + 2))
-          sed -n "${start_line},${end_line}p" "$FILE_PATH" || echo "Avertissement: Moins de lignes que prévu pour la vérification."
-          
+        # IMPORTANT: Remplacez 'chemin/vers/votre/fichier.ext' ci-dessous
+        # par le chemin réel de votre fichier (ex: MonApp/MonApp.xcodeproj/project.pbxproj)
+        FILE_PATH="${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }}/project.pbxproj" # <-- MODIFIEZ CECI
+        LINE_NUMBER=1271
+        LINE_TO_INSERT='				321117AA296573680001FC2C /* SDCallbackQueue.m in Sources */,'
+
+        echo "Vérification de l'existence du fichier : $FILE_PATH"
+        if [ ! -f "$FILE_PATH" ]; then
+          echo "ERREUR: Le fichier $FILE_PATH n'a pas été trouvé."
+          exit 1
+        fi
+
+        echo "Tentative d'insertion de la ligne à la ligne $LINE_NUMBER dans $FILE_PATH"
+
+        # Utilisation de sed pour insérer la ligne.
+        # L'option -i '' est nécessaire sur macOS (BSD sed) pour éditer le fichier en place sans créer de backup.
+        # La commande 'i\' insère le texte qui suit *avant* la ligne spécifiée.
+        # Attention aux caractères spéciaux dans LINE_TO_INSERT si vous la changez. Ici, ça devrait aller.
+        sed -i '' "${LINE_NUMBER}i\\
+        ${LINE_TO_INSERT}
+        " "$FILE_PATH"
+
+        echo "Insertion terminée."
+
+        # Optionnel : Vérification (affiche la ligne insérée et quelques lignes autour)
+        echo "Vérification du contenu autour de la ligne $LINE_NUMBER :"
+        # sed -n 'start,end p' affiche les lignes dans cet intervalle
+        start_line=$((LINE_NUMBER - 2))
+        end_line=$((LINE_NUMBER + 2))
+        sed -n "${start_line},${end_line}p" "$FILE_PATH" || echo "Avertissement: Moins de lignes que prévu pour la vérification."
+
     - name: Upload .a files as artifact
       uses: actions/upload-artifact@v4.6.2
       with:
