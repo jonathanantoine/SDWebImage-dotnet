@@ -27,45 +27,6 @@ jobs:
         unzip sdwebimage.zip
         rm sdwebimage.zip
         
-    - name: Ajouter SDCallbackQueue.m dans project.pbxproj
-      working-directory: ${{ env.SRC_FOLDER }}
-      run: |
-        PBXPROJ_FILE="${{ env.PROJ_NAME }}/project.pbxproj"
-        TARGET_LINE="3290FA0A1FA478AF0047D20C \/\* SDImageFrame\.m in Sources \*\/,"
-        NEW_LINE="				321117AA296573680001FC2C /* SDCallbackQueue.m in Sources */,"
-    
-        if [ ! -f "$PBXPROJ_FILE" ]; then
-        echo "Erreur : Le fichier $PBXPROJ_FILE n'existe pas."
-        exit 1
-        fi
-    
-        # Créer une sauvegarde du fichier original
-        cp "$PBXPROJ_FILE" "$PBXPROJ_FILE.bak"
-    
-        # Ajouter la nouvelle ligne après la ligne cible
-        sed -i'' -e "/$TARGET_LINE/a\\
-        $NEW_LINE" "$PBXPROJ_FILE"
-    
-        # Vérifier si la ligne a été ajoutée
-        if grep -q "$NEW_LINE" "$PBXPROJ_FILE"; then
-        echo "Ligne ajoutée avec succès dans $PBXPROJ_FILE."
-        else
-        echo "Erreur : Impossible d'ajouter la ligne dans $PBXPROJ_FILE."
-        # Restaurer la sauvegarde en cas d'échec
-        mv "$PBXPROJ_FILE.bak" "$PBXPROJ_FILE"
-        exit 1
-        fi
-    
-        # Supprimer la sauvegarde si tout s'est bien passé
-        rm "$PBXPROJ_FILE.bak"
-        
-    - name: Upload .cxcproj files as artifact
-      uses: actions/upload-artifact@v4.6.2
-      with:
-        name: native-libs
-        compression-level: '0'
-        path:
-          ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }}/**
     
     
     - name: Build SDWebImage for simulator
