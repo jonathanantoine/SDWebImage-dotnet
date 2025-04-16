@@ -10,6 +10,8 @@ namespace SDWebImage {
     // typedef void (^SDExternalCompletionBlock)(UIImage * _Nullable, NSError * _Nullable, SDImageCacheType, NSURL * _Nullable);
     delegate void SDExternalCompletionHandler ([NullAllowed] UIImage image, [NullAllowed] NSError error, SDImageCacheType cacheType, [NullAllowed] NSUrl imageUrl);
 
+    [BaseType(typeof(NSObject))]
+    interface SDCallbackQueue { }
     
 	[Category]
 	[BaseType (typeof (UIImageView))]
