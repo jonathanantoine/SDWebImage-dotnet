@@ -68,6 +68,23 @@ jobs:
            -sdk iphonesimulator${{ env.SDK }} \
            IPHONEOS_DEPLOYMENT_TARGET=12.2 \
         
+    - name: Upload .a files as artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: native-libs-iphoneosd
+        compression-level: '0'
+        path:
+          ${{ env.SRC_FOLDER }}/build/**
+    
+    
+    - name: Upload .a files as artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: native-libs-iphoneos
+        compression-level: '0'
+        path:
+          ${{ env.SRC_FOLDER }}/**
+    
     - name: Build SDWebImage for device
       run: |
         xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
@@ -113,7 +130,7 @@ jobs:
     - name: Create XCFramework
       run: |
           xcodebuild -create-xcframework \
-            -archive "${{ env.SRC_FOLDER }}/archive/iphoneos.xcarchive" -library Products/usr/local/lib/libSDWebImage.a \
+            -archive "${{ env.SRC_FOLDER }}/SDWebImage-5.21.0/build/UninstalledProducts/iphonesimulator/libSDWebImage.a" -library Products/usr/local/lib/libSDWebImage.a \
             -archive "${{ env.SRC_FOLDER }}/archive/iphoneos.xcarchive" -library Products/usr/local/lib/libSDWebImage.a \
             -output "SDWebImage.xcframework"
           echo "XCFramework créé à SDWebImage.xcframework"
