@@ -67,7 +67,7 @@ jobs:
           -target "SDWebImage static" \
           -sdk iphonesimulator${{ env.SDK }} \
           IPHONEOS_DEPLOYMENT_TARGET=12.2 \
-          EXCLUDED_ARCHS="arm64"
+          
 
     - name: Build SDWebImage for device
       run: |
