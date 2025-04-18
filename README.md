@@ -11,8 +11,10 @@
 * `Install-Package com.jonathanantoine.SDWebImage`
 * <https://www.nuget.org/packages/com.jonathanantoine.SDWebImage>
 
-## Build
+## Compatibility
+* Run on ios and ios simulator (arm64 + x86_64).
 
+## Build
 * Run the GitHub action to build the project
 
 
