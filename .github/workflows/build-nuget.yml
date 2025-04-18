@@ -68,20 +68,11 @@ jobs:
           -sdk iphonesimulator${{ env.SDK }} \
           IPHONEOS_DEPLOYMENT_TARGET=12.2 \
 
-#    - name: Build SDWebImage for device
-#      run: |
-#        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-#          -configuration Release \
-#          -target "SDWebImage static" \
-#          -sdk iphoneos${{ env.SDK }} \
-#          IPHONEOS_DEPLOYMENT_TARGET=12.2
-#          EXCLUDED_ARCHS="arm64"
-    
+
       
     - name: Create universal lib with lipo
       run: |
         lipo -create \
-#          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
           ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
           -output ./libSDWebImage.a
         lipo -info ./libSDWebImage.a
