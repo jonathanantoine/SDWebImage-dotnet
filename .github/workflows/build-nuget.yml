@@ -68,6 +68,14 @@ jobs:
            -sdk iphonesimulator${{ env.SDK }} \
            IPHONEOS_DEPLOYMENT_TARGET=12.2 \
         
+    - name: Build SDWebImage for device
+      run: |
+        xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+          -target "SDWebImage static" \
+          -sdk iphoneos{{ env.SDK }} \
+          IPHONEOS_DEPLOYMENT_TARGET=12.2 \
+        
+        
 #    - name: Build SDWebImage for simulator
 #      run: |
 #         xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
