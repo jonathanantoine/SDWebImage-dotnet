@@ -67,7 +67,6 @@ jobs:
           -target "SDWebImage static" \
           -sdk iphonesimulator${{ env.SDK }} \
           IPHONEOS_DEPLOYMENT_TARGET=12.2 \
-          EXCLUDED_ARCHS="arm64"
 
     - name: Build SDWebImage for device
       run: |
@@ -75,9 +74,7 @@ jobs:
           -configuration Release \
           -target "SDWebImage static" \
           -sdk iphoneos${{ env.SDK }} \
-          IPHONEOS_DEPLOYMENT_TARGET=12.2
-          EXCLUDED_ARCHS="arm64"
-        
+          IPHONEOS_DEPLOYMENT_TARGET=12.2        
         
     - name: Create XCFramework
       run: |
