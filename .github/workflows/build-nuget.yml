@@ -61,7 +61,7 @@ jobs:
         end_line=$((LINE_NUMBER + 2))
         sed -n "${start_line},${end_line}p" "$FILE_PATH" || echo "Avertissement: Moins de lignes que prévu pour la vérification."
         
-    - name: Build SDWebImage for simulator
+    - name: Build xcframework
       run: |
          xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
            -target "SDWebImage XCFramework" \
@@ -76,20 +76,20 @@ jobs:
           ${{ env.SRC_FOLDER }}/build/**
     
     
-    - name: Upload .a files as artifact
-      uses: actions/upload-artifact@v4.6.2
-      with:
-        name: native-libs-iphoneos
-        compression-level: '0'
-        path:
-          ${{ env.SRC_FOLDER }}/**
+#    - name: Upload .a files as artifact
+#      uses: actions/upload-artifact@v4.6.2
+#      with:
+#        name: native-libs-iphoneos
+#        compression-level: '0'
+#        path:
+#          ${{ env.SRC_FOLDER }}/**
     
-    - name: Build SDWebImage for device
-      run: |
-        xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-          -target "SDWebImage static" \
-          -sdk iphoneos{{ env.SDK }} \
-          IPHONEOS_DEPLOYMENT_TARGET=12.2 \
+#    - name: Build SDWebImage for device
+#      run: |
+#        xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+#          -target "SDWebImage static" \
+#          -sdk iphoneos{{ env.SDK }} \
+#          IPHONEOS_DEPLOYMENT_TARGET=12.2 \
         
         
 #    - name: Build SDWebImage for simulator
@@ -125,15 +125,21 @@ jobs:
 #          -target "SDWebImage static" \
 #          -sdk iphoneos${{ env.SDK }} \
 #          IPHONEOS_DEPLOYMENT_TARGET=12.2        
-        
-    - name: Create XCFramework
+          
+    - name: move xcframework at correct place
       run: |
-          xcodebuild -create-xcframework \
-            -archive "${{ env.SRC_FOLDER }}/SDWebImage-5.21.0/build/UninstalledProducts/iphonesimulator/libSDWebImage.a" -library Products/usr/local/lib/libSDWebImage.a \
-            -archive "${{ env.SRC_FOLDER }}/archive/iphoneos.xcarchive" -library Products/usr/local/lib/libSDWebImage.a \
-            -output "SDWebImage.xcframework"
-          echo "XCFramework créé à SDWebImage.xcframework"
-          ls -lha SDWebImage.xcframework # Afficher le contenu du xcframework créé        
+          ls -lha ${{ env.SRC_FOLDER }}/build/SDWebImage.xcframework # Afficher le contenu du xcframework créé   
+          mv ${{ env.SRC_FOLDER }}/build/SDWebImage.xcframework ./SDWebImage.xcframework
+          
+          
+          #    - name: Create XCFramework
+#      run: |
+#          xcodebuild -create-xcframework \
+#            -archive "${{ env.SRC_FOLDER }}/SDWebImage-5.21.0/build/UninstalledProducts/iphonesimulator/libSDWebImage.a" -library Products/usr/local/lib/libSDWebImage.a \
+#            -archive "${{ env.SRC_FOLDER }}/archive/iphoneos.xcarchive" -library Products/usr/local/lib/libSDWebImage.a \
+#            -output "SDWebImage.xcframework"
+#          echo "XCFramework créé à SDWebImage.xcframework"
+#          ls -lha SDWebImage.xcframework # Afficher le contenu du xcframework créé        
           
 #    - name: Create universal lib with lipo
 #      run: |
