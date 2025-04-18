@@ -67,15 +67,34 @@ jobs:
           -target "SDWebImage static" \
           -sdk iphonesimulator${{ env.SDK }} \
           IPHONEOS_DEPLOYMENT_TARGET=12.2 \
+          EXCLUDED_ARCHS="arm64"
 
-
-      
-    - name: Create universal lib with lipo
+    - name: Build SDWebImage for device
       run: |
-        lipo -create \
-          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
-          -output ./libSDWebImage.a
-        lipo -info ./libSDWebImage.a
+        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+          -configuration Release \
+          -target "SDWebImage static" \
+          -sdk iphoneos${{ env.SDK }} \
+          IPHONEOS_DEPLOYMENT_TARGET=12.2
+          EXCLUDED_ARCHS="arm64"
+        
+        
+    - name: Create XCFramework
+      run: |
+          xcodebuild -create-xcframework \
+            -archive "${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a" -library Products/usr/local/lib/libSDWebImage.a \
+            -archive "${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a" -library Products/usr/local/lib/libSDWebImage.a \
+            -output "SDWebImage.xcframework"
+          echo "XCFramework créé à SDWebImage.xcframework"
+          ls -lha SDWebImage.xcframework # Afficher le contenu du xcframework créé        
+          
+#    - name: Create universal lib with lipo
+#      run: |
+#        lipo -create \
+#          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
+#          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
+#          -output ./libSDWebImage.a
+#        lipo -info ./libSDWebImage.a
 
     - name: Install .NET 9
       uses: actions/setup-dotnet@v4

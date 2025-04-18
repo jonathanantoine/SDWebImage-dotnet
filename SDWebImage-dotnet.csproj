@@ -27,8 +27,8 @@
         <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
     <ItemGroup>
-        <NativeReference Include="libSDWebImage.a">
-            <Kind>Static</Kind>
+        <NativeReference Include="SDWebImage.xcframework">
+            <Kind>Framework</Kind>
             <Frameworks>Foundation ImageIO CoreGraphics QuartzCore</Frameworks>
             <SmartLink>True</SmartLink>
             <ForceLoad>True</ForceLoad>
