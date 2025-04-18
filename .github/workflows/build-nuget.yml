@@ -79,9 +79,9 @@ jobs:
     - name: Build xcframework
       run: |
         xcodebuild -create-xcframework \
-           -framework " ${{ env.SRC_FOLDER }}/build/iOS/SDWebImage.framework"
-           -framework " ${{ env.SRC_FOLDER }}/build/iOSSimulator/SDWebImage.framework"
-           -output "./SDWebImage.xcframework"
+           -framework "${{ env.SRC_FOLDER }}/build/iOS/SDWebImage.framework" \
+           -framework "${{ env.SRC_FOLDER }}/build/iOSSimulator/SDWebImage.framework" \
+           -output ./SDWebImage.xcframework
         
     - name: Upload final framework as artifact
       uses: actions/upload-artifact@v4.6.2
