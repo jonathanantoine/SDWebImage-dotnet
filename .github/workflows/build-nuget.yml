@@ -66,7 +66,6 @@ jobs:
          xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
          -target "SDWebImage static" \
          -sdk iphonesimulator${{ env.SDK }} \
-         -archivePath "${{ env.SRC_FOLDER }}/archive/iphonesimulator.xcarchive" \
          IPHONEOS_DEPLOYMENT_TARGET=12.2 \                
          SKIP_INSTALL=NO \
          BUILD_LIBRARY_FOR_DISTRIBUTION=YES
