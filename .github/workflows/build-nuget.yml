@@ -65,7 +65,6 @@ jobs:
       run: |
          xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
            -target "SDWebImage XCFramework" \
-#           IPHONEOS_DEPLOYMENT_TARGET=12.2 \
         
     - name: Upload build folder as artifact
       uses: actions/upload-artifact@v4.6.2
@@ -91,82 +90,6 @@ jobs:
         path:
           ./SDWebImage.xcframework
           
-          
-          #    - name: move xcframework at correct place
-#      run: |
-#        ls -lha ${{ env.SRC_FOLDER }}/build/SDWebImage.xcframework # Afficher le contenu du xcframework créé   
-#        mv ${{ env.SRC_FOLDER }}/build/SDWebImage.xcframework ./SDWebImage.xcframework
-        
-        
-        
-        #    - name: Upload .a files as artifact
-#      uses: actions/upload-artifact@v4.6.2
-#      with:
-#        name: native-libs-iphoneos
-#        compression-level: '0'
-#        path:
-#          ${{ env.SRC_FOLDER }}/**
-    
-#    - name: Build SDWebImage for device
-#      run: |
-#        xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-#          -target "SDWebImage static" \
-#          -sdk iphoneos{{ env.SDK }} \
-#          IPHONEOS_DEPLOYMENT_TARGET=12.2 \
-        
-        
-#    - name: Build SDWebImage for simulator
-#      run: |
-#         xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-#         -target "SDWebImage static" \
-#         -sdk iphonesimulator${{ env.SDK }} \
-#         IPHONEOS_DEPLOYMENT_TARGET=12.2 \                
-#         SKIP_INSTALL=NO \
-#         BUILD_LIBRARY_FOR_DISTRIBUTION=YES
-#                
-#    - name: Build SDWebImage for simulator
-#      run: |
-#        xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-#         -target "SDWebImage static" \
-#          -sdk iphoneos {{ env.SDK }} \
-#          -archivePath "${{ env.SRC_FOLDER }}/archive/iphoneos.xcarchive" \
-#          IPHONEOS_DEPLOYMENT_TARGET=12.2 \                
-#          SKIP_INSTALL=NO \
-#          BUILD_LIBRARY_FOR_DISTRIBUTION=YES
-        
-#    - name: Build SDWebImage for simulator
-#      run: |
-#        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-#          -target "SDWebImage static" \
-#          -sdk iphonesimulator${{ env.SDK }} \
-#          IPHONEOS_DEPLOYMENT_TARGET=12.2 \
-#
-#    - name: Build SDWebImage for device
-#      run: |
-#        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-#          -configuration Release \
-#          -target "SDWebImage static" \
-#          -sdk iphoneos${{ env.SDK }} \
-#          IPHONEOS_DEPLOYMENT_TARGET=12.2        
-          
-
-          #    - name: Create XCFramework
-#      run: |
-#          xcodebuild -create-xcframework \
-#            -archive "${{ env.SRC_FOLDER }}/SDWebImage-5.21.0/build/UninstalledProducts/iphonesimulator/libSDWebImage.a" -library Products/usr/local/lib/libSDWebImage.a \
-#            -archive "${{ env.SRC_FOLDER }}/archive/iphoneos.xcarchive" -library Products/usr/local/lib/libSDWebImage.a \
-#            -output "SDWebImage.xcframework"
-#          echo "XCFramework créé à SDWebImage.xcframework"
-#          ls -lha SDWebImage.xcframework # Afficher le contenu du xcframework créé        
-          
-#    - name: Create universal lib with lipo
-#      run: |
-#        lipo -create \
-#          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
-#          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
-#          -output ./libSDWebImage.a
-#        lipo -info ./libSDWebImage.a
-
     - name: Install .NET 9
       uses: actions/setup-dotnet@v4
       with:
@@ -188,11 +111,3 @@ jobs:
         compression-level: '0'
         path:
           /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg  
-
-#    - name: Upload .a files as artifact
-#      uses: actions/upload-artifact@v4.6.2
-#      with:
-#        name: native-libs-iphoneos
-#        compression-level: '0'
-#        path:
-#          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/** 
