@@ -74,9 +74,32 @@ jobs:
         compression-level: '0'
         path:
           ${{ env.SRC_FOLDER }}/build/**
-    
-    
-#    - name: Upload .a files as artifact
+         
+        
+    - name: Build xcframework
+      run: |
+        xcodebuild -create-xcframework \
+           -framework " ${{ env.SRC_FOLDER }}/build/iOS/SDWebImage.framework"
+           -framework " ${{ env.SRC_FOLDER }}/build/iOSSimulator/SDWebImage.framework"
+           -output "./SDWebImage.xcframework"
+        
+    - name: Upload final framework as artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: final-framework
+        compression-level: '0'
+        path:
+          ./SDWebImage.xcframework
+          
+          
+          #    - name: move xcframework at correct place
+#      run: |
+#        ls -lha ${{ env.SRC_FOLDER }}/build/SDWebImage.xcframework # Afficher le contenu du xcframework créé   
+#        mv ${{ env.SRC_FOLDER }}/build/SDWebImage.xcframework ./SDWebImage.xcframework
+        
+        
+        
+        #    - name: Upload .a files as artifact
 #      uses: actions/upload-artifact@v4.6.2
 #      with:
 #        name: native-libs-iphoneos
@@ -126,12 +149,7 @@ jobs:
 #          -sdk iphoneos${{ env.SDK }} \
 #          IPHONEOS_DEPLOYMENT_TARGET=12.2        
           
-    - name: move xcframework at correct place
-      run: |
-          ls -lha ${{ env.SRC_FOLDER }}/build/SDWebImage.xcframework # Afficher le contenu du xcframework créé   
-          mv ${{ env.SRC_FOLDER }}/build/SDWebImage.xcframework ./SDWebImage.xcframework
-          
-          
+
           #    - name: Create XCFramework
 #      run: |
 #          xcodebuild -create-xcframework \
