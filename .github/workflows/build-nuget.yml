@@ -60,32 +60,28 @@ jobs:
         start_line=$((LINE_NUMBER - 2))
         end_line=$((LINE_NUMBER + 2))
         sed -n "${start_line},${end_line}p" "$FILE_PATH" || echo "Avertissement: Moins de lignes que prévu pour la vérification."
-                
-    - name: Build SDWebImage for simulator
+        
+    - name: Build FULL xcframework
       run: |
-        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-          -target "SDWebImage static" \
-          -sdk iphonesimulator${{ env.SDK }} \
-          IPHONEOS_DEPLOYMENT_TARGET=12.2 \
-          EXCLUDED_ARCHS="arm64"
-
-    - name: Build SDWebImage for device
+         xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+           -target "SDWebImage XCFramework" \
+        
+        
+    - name: Build ios/ios-simulator xcframework
       run: |
-        xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
-          -configuration Release \
-          -target "SDWebImage static" \
-          -sdk iphoneos${{ env.SDK }} \
-          IPHONEOS_DEPLOYMENT_TARGET=12.2
-    
-      
-    - name: Create universal lib with lipo
-      run: |
-        lipo -create \
-          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/libSDWebImage.a \
-          ${{ env.SRC_FOLDER }}/build/Release-iphonesimulator/libSDWebImage.a \
-          -output ./libSDWebImage.a
-        lipo -info ./libSDWebImage.a
-
+        xcodebuild -create-xcframework \
+           -framework "${{ env.SRC_FOLDER }}/build/iOS/SDWebImage.framework" \
+           -framework "${{ env.SRC_FOLDER }}/build/iOSSimulator/SDWebImage.framework" \
+           -output ./SDWebImage.xcframework
+        
+    - name: Upload final framework as artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: final-framework
+        compression-level: '0'
+        path:
+          ./SDWebImage.xcframework
+          
     - name: Install .NET 9
       uses: actions/setup-dotnet@v4
       with:
@@ -103,15 +99,7 @@ jobs:
     - name: Upload .nupkg as artifact
       uses: actions/upload-artifact@v4.6.2
       with:
-        name: nuget-package
+        name: SDWebImage-nuget-package
         compression-level: '0'
         path:
           /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg  
-
-    - name: Upload .a files as artifact
-      uses: actions/upload-artifact@v4.6.2
-      with:
-        name: native-libs-iphoneos
-        compression-level: '0'
-        path:
-          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/** 

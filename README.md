@@ -2,7 +2,7 @@
 
 [![NuGet version](https://badge.fury.io/nu/com.jonathanantoine.SDWebImage.svg)](https://badge.fury.io/nu/com.jonathanantoine.SDWebImage)
 
-- Native library: [SDWebImage](https://github.com/SDWebImage/SDWebImage)
+- Native library repository: [SDWebImage](https://github.com/SDWebImage/SDWebImage)
 
 **Support Net 9.0 for iOS (works with Xcode 15 and iOS 17)**
 
@@ -11,8 +11,10 @@
 * `Install-Package com.jonathanantoine.SDWebImage`
 * <https://www.nuget.org/packages/com.jonathanantoine.SDWebImage>
 
-## Build
+## Compatibility
+* Run on ios and ios simulator (arm64 + x86_64).
 
+## Build
 * Run the GitHub action to build the project
 
 
