@@ -67,10 +67,10 @@ jobs:
            -target "SDWebImage XCFramework" \
 #           IPHONEOS_DEPLOYMENT_TARGET=12.2 \
         
-    - name: Upload .a files as artifact
+    - name: Upload build folder as artifact
       uses: actions/upload-artifact@v4.6.2
       with:
-        name: native-libs-iphoneosd
+        name: build-result
         compression-level: '0'
         path:
           ${{ env.SRC_FOLDER }}/build/**
@@ -171,10 +171,10 @@ jobs:
         path:
           /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg  
 
-    - name: Upload .a files as artifact
-      uses: actions/upload-artifact@v4.6.2
-      with:
-        name: native-libs-iphoneos
-        compression-level: '0'
-        path:
-          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/** 
+#    - name: Upload .a files as artifact
+#      uses: actions/upload-artifact@v4.6.2
+#      with:
+#        name: native-libs-iphoneos
+#        compression-level: '0'
+#        path:
+#          ${{ env.SRC_FOLDER }}/build/Release-iphoneos/** 
