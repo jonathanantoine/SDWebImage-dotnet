@@ -65,7 +65,7 @@ jobs:
       run: |
          xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
            -target "SDWebImage static" \
-           -exportArchive \
+           -exportArchive -exportOptionsPlist  \
            -archivePath ${{ env.SRC_FOLDER }}/archives/iphonesimulator$.xcarchive \
            -sdk iphonesimulator${{ env.SDK }} \
            IPHONEOS_DEPLOYMENT_TARGET=12.2 \
