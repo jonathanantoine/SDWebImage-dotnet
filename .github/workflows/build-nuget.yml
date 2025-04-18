@@ -63,7 +63,7 @@ jobs:
         
     - name: Build SDWebImage for simulator
       run: |
-         xcodebuild archive  -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
+         xcodebuild archive -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
            -scheme  "SDWebImage static" \
            -sdk iphonesimulator${{ env.SDK }} \
            -archivePath "${{ env.SRC_FOLDER }}/archive/iphonesimulator.xcarchive" \
