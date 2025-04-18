@@ -66,14 +66,6 @@ jobs:
          xcodebuild -project ${{ env.SRC_FOLDER }}/${{ env.PROJ_NAME }} \
            -target "SDWebImage XCFramework" \
         
-    - name: Upload build folder as artifact
-      uses: actions/upload-artifact@v4.6.2
-      with:
-        name: build-result
-        compression-level: '0'
-        path:
-          ${{ env.SRC_FOLDER }}/build/**
-         
         
     - name: Build ios/ios-simulator xcframework
       run: |
