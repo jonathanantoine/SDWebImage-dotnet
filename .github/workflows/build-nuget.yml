@@ -107,7 +107,7 @@ jobs:
     - name: Upload .nupkg as artifact
       uses: actions/upload-artifact@v4.6.2
       with:
-        name: nuget-package
+        name: SDWebImage-nuget-package
         compression-level: '0'
         path:
           /Users/runner/work/SDWebImage-dotnet/SDWebImage-dotnet/bin/Release/*.nupkg  
